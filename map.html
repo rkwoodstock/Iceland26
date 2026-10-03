@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Photo Map — Iceland ’26</title>
+<meta name="description" content="One hundred photographs from a road trip around Iceland, placed where they were taken, with the route driven each day." />
+<meta name="theme-color" content="#0b0c0e" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="site.css?v=20261003d" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css?v=20261003d" />
+</head>
+<body class="page-map">
+<header class="site-header" id="top">
+  <a class="brand" href="index.html" aria-label="Home"><span class="brand-word">Iceland</span><span class="brand-year">’26</span></a>
+  <nav class="site-nav" aria-label="Pages">
+    <a href="map.html" aria-current="page"><span class="n">01</span>Map</a>
+    <a href="lightbox.html"><span class="n">02</span>Lightbox</a>
+  </nav>
+  <div class="clock mono"><i class="dot"></i><span>Reykjavík</span><time id="clock">--:--</time></div>
+</header>
+
+<main class="mp">
+  <section class="mp-map" aria-label="Map">
+    <div id="map"></div>
+    <div class="mp-hud mono" aria-hidden="true">
+      <span id="hud-pos">—</span>
+      <span id="hud-zoom"></span>
+    </div>
+    <div class="mp-daylabel" id="mp-daylabel" aria-live="polite"></div>
+  </section>
+
+  <aside class="mp-panel" aria-label="Photographs">
+    <header class="mp-head">
+      <p class="eyebrow mono">(01) — Photo Map</p>
+      <h1 class="mp-title">Every frame,<br /><em>in place.</em></h1>
+      <dl class="mp-stats mono">
+        <div><dt>Frames</dt><dd id="st-frames"></dd></div>
+        <div><dt>Days</dt><dd id="st-days"></dd></div>
+        <div><dt>Kilometres</dt><dd id="st-km"></dd></div>
+      </dl>
+    </header>
+    <div class="mp-days" id="mp-days" role="group" aria-label="Filter by day"></div>
+    <ol class="mp-list" id="mp-list"></ol>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <p class="eyebrow mono">Next — (02)</p>
+  <a class="footer-next" href="lightbox.html"><span>Light<em>box</em></span><span class="arr">→</span></a>
+  <p class="footer-note">Thirty-five frames of reversal film, held up to the light.</p>
+  <div class="footer-grid mono">
+    <div><span>Photographs</span><p id="f-camera"></p></div>
+    <div><span>Route data</span><p>Google Maps Timeline</p></div>
+    <div><span>Elsewhere</span><p><a href="index.html">Iceland ’26</a></p></div>
+    <div class="footer-top"><a href="#top">Back to top ↑</a></div>
+  </div>
+</footer>
+
+<!-- Photo viewer -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Photograph" hidden>
+  <figure class="v-figure">
+    <img id="v-img" alt="" />
+  </figure>
+  <div class="v-info">
+    <p class="v-count mono" id="v-count"></p>
+    <h2 class="v-title" id="v-title"></h2>
+    <p class="v-comment" id="v-comment"></p>
+    <dl class="v-meta mono">
+      <div><dt>Date</dt><dd id="v-date"></dd></div>
+      <div><dt>Camera</dt><dd id="v-camera"></dd></div>
+      <div><dt>Lens</dt><dd id="v-lens"></dd></div>
+      <div><dt>Exposure</dt><dd id="v-exif"></dd></div>
+      <div><dt>Position</dt><dd id="v-pos"></dd></div>
+    </dl>
+  </div>
+  <button class="p-btn p-close" id="v-close" aria-label="Close">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+  <button class="p-btn p-prev" id="v-prev" aria-label="Previous photograph">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <button class="p-btn p-next" id="v-next" aria-label="Next photograph">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="config.js?v=20261003d"></script>
+<script src="data.js?v=20261003d"></script>
+<script src="routes.js?v=20261003d"></script>
+<script src="site.js?v=20261003d"></script>
+<script src="script.js?v=20261003d"></script>
+</body>
+</html>

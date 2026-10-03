@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Iceland — 9 days around the ring road</title>
+<meta name="description" content="Nine days around Iceland’s ring road — a photo map of where every frame was taken, and a light table of slides shot on reversal film." />
+<meta name="theme-color" content="#0b0c0e" />
+<meta property="og:title" content="Iceland — 9 days around the ring road" />
+<meta property="og:description" content="A photo map of where every frame was taken, and a light table of slides shot on reversal film." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" />
+<link rel="preload" as="image" href="images/site/hero.jpg" imagesrcset="images/site/hero-1280.jpg 1280w, images/site/hero.jpg 2560w" imagesizes="100vw" fetchpriority="high" />
+<link rel="stylesheet" href="site.css?v=20261003d" />
+<link rel="stylesheet" href="home.css?v=20261003d" />
+<script>
+  // 初回訪問だけイントロを出す（ストレージが使えない環境では出さない）
+  try { if (!sessionStorage.getItem("introSeen")) document.documentElement.classList.add("has-intro"); } catch (e) {}
+</script>
+</head>
+<body class="page-home">
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-word"><span>I</span><span>c</span><span>e</span><span>l</span><span>a</span><span>n</span><span>d</span></div>
+  <div class="intro-meta mono"><span>64°08′N&ensp;21°56′W</span><span><span id="intro-count">000</span>%</span></div>
+  <div class="intro-bar"><i id="intro-bar"></i></div>
+</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="Home"><span class="brand-word">Iceland</span><span class="brand-year">’26</span></a>
+  <nav class="site-nav" aria-label="Pages">
+    <a href="map.html"><span class="n">01</span>Map</a>
+    <a href="lightbox.html"><span class="n">02</span>Lightbox</a>
+  </nav>
+  <div class="clock mono"><i class="dot"></i><span>Reykjavík</span><time id="clock">--:--</time></div>
+</header>
+
+<main id="top">
+  <!-- ヒーロー -->
+  <section class="hero">
+    <div class="hero-media"><img src="images/site/hero.jpg" srcset="images/site/hero-1280.jpg 1280w, images/site/hero.jpg 2560w" sizes="100vw" alt="Kirkjufell above Kirkjufellsfoss on a grey summer evening" fetchpriority="high" /></div>
+    <div class="hero-inner">
+      <p class="hero-kicker mono"><span class="line"><span>A road trip around the island</span></span></p>
+      <h1 class="hero-title"><span class="line"><span>Iceland</span></span></h1>
+      <dl class="hero-meta mono">
+        <div><dt>Dates</dt><dd id="m-dates"></dd></div>
+        <div><dt>Distance</dt><dd id="m-km"></dd></div>
+        <div><dt>Frames</dt><dd id="m-frames"></dd></div>
+        <div><dt>Cover</dt><dd id="m-cover"></dd></div>
+      </dl>
+    </div>
+    <div class="scroll-cue mono" aria-hidden="true"><span>Scroll</span><i></i></div>
+  </section>
+
+  <!-- プロローグ -->
+  <section class="prologue">
+    <p class="eyebrow mono" data-reveal>Prologue</p>
+    <h2 class="prologue-text" data-reveal-group>
+      <span class="line" style="--d:.0s"><span><span class="days-num"></span> days around the island.</span></span>
+      <span class="line" style="--d:.08s"><span>Highland fog, black sand, <em>a lagoon full of ice.</em></span></span>
+      <span class="line" style="--d:.16s"><span><span class="digital-num"></span> frames on digital, <span class="film-num"></span> on film.</span></span>
+    </h2>
+    <dl class="stats" data-reveal-group>
+      <div><dt class="mono">Days</dt><dd data-count="days">0</dd></div>
+      <div><dt class="mono">Kilometres</dt><dd data-count="km">0</dd></div>
+      <div><dt class="mono">Digital frames</dt><dd data-count="digital">0</dd></div>
+      <div><dt class="mono">Film frames</dt><dd data-count="film">0</dd></div>
+    </dl>
+  </section>
+
+  <!-- (01) Photo Map: 日ごとのルートをたどり、最後に地図ページへ -->
+  <section class="journey" aria-labelledby="journey-title">
+    <header class="section-head">
+      <p class="eyebrow mono" data-reveal>(01) — Photo Map</p>
+      <h2 id="journey-title" class="display" data-reveal-group>
+        <span class="line"><span>Nine days,</span></span>
+        <span class="line" style="--d:.08s"><span><em>one ring road.</em></span></span>
+      </h2>
+    </header>
+    <div class="journey-body">
+      <div class="journey-map">
+        <div class="jm-frame">
+          <div class="jm-top mono"><span id="jm-day">Day 01</span><span id="jm-date"></span></div>
+          <svg id="journey-svg"></svg>
+          <ol class="jm-index mono" id="jm-index"></ol>
+          <div class="jm-bottom mono"><span><b id="jm-km">0</b> km driven</span><span id="jm-label"></span></div>
+        </div>
+      </div>
+      <ol class="chapters" id="chapters"></ol>
+    </div>
+    <a class="enter" href="map.html" data-cursor="Open" data-reveal>
+      <span class="enter-label mono">Enter — (01)</span>
+      <span class="enter-title">Photo <em>Map</em></span>
+      <span class="enter-desc">Every frame pinned where it was taken, with the road driven each day.</span>
+      <span class="enter-meta mono" id="enter-map-meta"></span>
+      <span class="enter-arrow" aria-hidden="true">→</span>
+    </a>
+  </section>
+
+  <!-- (02) Lightbox: フィルムストリップを見せ、最後にライトボックスページへ -->
+  <section class="strip-section" aria-labelledby="strip-title">
+    <header class="section-head">
+      <p class="eyebrow mono" data-reveal>(02) — Lightbox</p>
+      <h2 id="strip-title" class="display" data-reveal-group>
+        <span class="line"><span>Thirty-five frames</span></span>
+        <span class="line" style="--d:.08s"><span><em>of daylight.</em></span></span>
+      </h2>
+    </header>
+    <div class="strip" aria-hidden="true">
+      <div class="strip-track" id="strip-track"></div>
+    </div>
+    <div class="enter-wrap">
+      <a class="enter" href="lightbox.html" data-cursor="Open" data-reveal>
+        <span class="enter-label mono">Enter — (02)</span>
+        <span class="enter-title">Light<em>box</em></span>
+        <span class="enter-desc">Slides of reversal film on a light table — move them, inspect them, project them.</span>
+        <span class="enter-meta mono" id="enter-lb-meta"></span>
+        <span class="enter-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p class="footer-big" aria-hidden="true">Bless.</p>
+  <p class="footer-note">“Bless” — Icelandic for <em>see you.</em></p>
+  <div class="footer-grid mono">
+    <div><span>Photographs</span><p id="f-gear"></p></div>
+    <div><span>Route data</span><p>Google Maps Timeline</p></div>
+    <div><span>Map tiles</span><p>© OpenStreetMap © CARTO</p></div>
+    <div class="footer-top"><a href="#top" id="to-top">Back to top ↑</a></div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="data.js?v=20261003d"></script>
+<script src="routes.js?v=20261003d"></script>
+<script src="film.js?v=20261003d"></script>
+<script src="site.js?v=20261003d"></script>
+<script src="slides.js?v=20261003d"></script>
+<script src="home.js?v=20261003d"></script>
+</body>
+</html>

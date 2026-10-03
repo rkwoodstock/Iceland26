@@ -1,0 +1,132 @@
+/* ==========================================================================
+   35mm スライドマウント（50×50mm の樹脂マウント + 36×24mm の窓）
+   サイズは親要素の幅で決まり、内部はすべて cqw（マウント幅に対する%）で描く。
+   ========================================================================== */
+
+.mount {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  container-type: inline-size;
+  border-radius: 5.5%;
+  isolation: isolate;
+}
+/* cqw は「祖先のコンテナ」基準なので、マウント自身の見た目は疑似要素側に描く */
+.mount::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 5.5cqw;
+  pointer-events: none;
+  /* 裏から光を受けた半透明の乳白樹脂。縁ほど薄く明るい + 細かな梨地 */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.28  0 0 0 0 0.25  0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(130% 130% at 28% 18%, #f3f1ec 0%, #e6e3dc 48%, #d8d4cb 100%);
+  box-shadow:
+    inset 0 0 0 0.35cqw rgba(255, 255, 255, 0.65),
+    inset 0 0 2.5cqw rgba(255, 255, 255, 0.35),
+    inset 0 -1cqw 2cqw rgba(60, 50, 40, 0.06),
+    0 0.25cqw 0.5cqw rgba(20, 22, 26, 0.28),
+    0 1.6cqw 3.2cqw rgba(20, 22, 26, 0.12);
+}
+
+/* 縦位置のコマはマウントごと90°回す（印字も横向きになる＝実物と同じ） */
+.mount-face { position: absolute; inset: 0; }
+.mount.portrait .mount-face { transform: rotate(-90deg); }
+
+/* 窓まわりの盛り上がった縁 */
+.mount-bevel {
+  position: absolute;
+  left: 11.6cqw;
+  top: 23.6cqw;
+  width: 76.8cqw;
+  height: 52.8cqw;
+  border-radius: 2.6cqw;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(70, 60, 50, 0.16) 100%);
+  box-shadow:
+    0 0 0 0.25cqw rgba(70, 60, 50, 0.08),
+    inset 0 0 0 0.25cqw rgba(255, 255, 255, 0.4);
+}
+
+/* 36×24mm の窓 */
+.mount-window {
+  position: absolute;
+  left: 14cqw;
+  top: 26cqw;
+  width: 72cqw;
+  height: 48cqw;
+  border-radius: 0.9cqw;
+  overflow: hidden;
+  background: #0c0d0f;
+}
+.mount-window img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+  /* 透過光で見たポジの鮮やかさ */
+  filter: saturate(1.14) contrast(1.05) brightness(1.06);
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.mount.portrait .mount-window img {
+  width: 48cqw;
+  height: 72cqw;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+/* フィルム面: 縁の影 / ほこり / ベースの艶 */
+.mount-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.10) 46%, rgba(255, 255, 255, 0) 58%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.22' stroke-width='.45' stroke-linecap='round'%3E%3Cpath d='M42 34q7 5 13-1t12 4 9-3'/%3E%3Cpath d='M228 150q5-6 3-12'/%3E%3C/g%3E%3Cg fill='%23000' fill-opacity='.5'%3E%3Ccircle cx='120' cy='62' r='1'/%3E%3Ccircle cx='212' cy='138' r='.7'/%3E%3Ccircle cx='72' cy='162' r='1.2'/%3E%3Ccircle cx='262' cy='42' r='.6'/%3E%3Ccircle cx='160' cy='182' r='.8'/%3E%3C/g%3E%3Cg fill='%23fff' fill-opacity='.75'%3E%3Ccircle cx='182' cy='92' r='.7'/%3E%3Ccircle cx='28' cy='112' r='.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%, 190cqw auto;
+  background-position: 0 0, var(--dust-x, 0) var(--dust-y, 0);
+  box-shadow:
+    inset 0 0 0 0.35cqw rgba(0, 0, 0, 0.55),
+    inset 0 0 2.4cqw rgba(0, 0, 0, 0.28);
+}
+
+/* 印字（工場で刷られた文字）と手書きメモ */
+.mount-print {
+  position: absolute;
+  font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 4.3cqw;
+  letter-spacing: 0.2em;
+  color: rgba(46, 43, 38, 0.72);
+  white-space: nowrap;
+  line-height: 1;
+  pointer-events: none;
+}
+.mount-print.brand { left: 0; right: 0; top: 9.5cqw; text-align: center; }
+.mount-print.no {
+  right: 9cqw;
+  bottom: 9.5cqw;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.mount-print.no::before { content: "№ "; letter-spacing: 0; }
+.mount-hand {
+  position: absolute;
+  left: 10cqw;
+  bottom: 5.5cqw;
+  font-family: var(--f-hand, "Reenie Beanie", cursive);
+  font-size: 10.5cqw;
+  line-height: 1;
+  color: #24357e;
+  opacity: 0.86;
+  transform: rotate(var(--hand-r, -3deg));
+  transform-origin: left bottom;
+  white-space: nowrap;
+  pointer-events: none;
+}

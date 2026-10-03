@@ -1,0 +1,406 @@
+/* ==========================================================================
+   Photo Map（地図ページ）。トークンとヘッダーは site.css と共通。
+   ========================================================================== */
+
+/* 地図は画面いっぱい。その下へスクロールすると次のページへのフッター */
+.page-map .site-header {
+  position: relative;
+  background: var(--ink);
+  border-bottom-color: var(--line);
+}
+
+.mp {
+  height: calc(100vh - var(--header-h));
+  height: calc(100svh - var(--header-h));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(340px, 28vw, 440px);
+}
+
+/* ---------- 地図 ---------- */
+.mp-map { position: relative; min-width: 0; }
+#map { position: absolute; inset: 0; background: #e4e6e3; }
+/* 暗いサイトの中に置いた「紙の地図」: Voyager を少し彩度を落とした落ち着いた色に */
+.leaflet-tile-pane { filter: saturate(0.62) brightness(0.98) contrast(1.03); }
+.mp-hud {
+  position: absolute;
+  z-index: 500;
+  left: 20px;
+  top: 18px;
+  display: flex;
+  gap: 14px;
+  padding: 7px 11px;
+  background: rgba(11, 12, 14, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--paper-dim);
+  pointer-events: none;
+}
+.mp-hud span:first-child { color: var(--paper); }
+.mp-daylabel {
+  position: absolute;
+  z-index: 500;
+  left: 20px;
+  bottom: 18px;
+  max-width: calc(100% - 120px);
+  font-family: var(--f-display);
+  font-size: clamp(30px, 3.4vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.95), 0 0 4px rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+}
+.mp-daylabel.is-on { opacity: 1; transform: none; }
+.mp-daylabel small {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(11, 12, 14, 0.65);
+}
+
+/* Leaflet の見た目をサイトに合わせる */
+.leaflet-container { font-family: var(--f-sans); background: #e4e6e3; }
+.leaflet-control-zoom.leaflet-bar {
+  border: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+.leaflet-control-zoom a {
+  width: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  border-radius: 0 !important;
+  background: rgba(11, 12, 14, 0.85) !important;
+  color: var(--paper) !important;
+  border: 0 !important;
+  font: 400 18px/38px var(--f-mono) !important;
+  backdrop-filter: blur(10px);
+}
+.leaflet-control-zoom a + a { border-top: 1px solid var(--line) !important; }
+.leaflet-control-zoom a:hover { background: rgba(40, 42, 46, 0.95) !important; }
+.leaflet-right .leaflet-control { margin-right: 20px; }
+.leaflet-bottom .leaflet-control { margin-bottom: 20px; }
+.leaflet-control-attribution {
+  background: rgba(11, 12, 14, 0.7) !important;
+  color: var(--paper-faint) !important;
+  font: 10px var(--f-mono) !important;
+  letter-spacing: 0.04em;
+  margin: 0 !important;
+}
+.leaflet-control-attribution a { color: var(--paper-dim) !important; }
+.leaflet-tooltip.mp-tip {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  font: 11px var(--f-mono);
+  letter-spacing: 0.06em;
+  padding: 6px 9px;
+}
+.leaflet-tooltip.mp-tip::before { display: none; }
+.leaflet-tooltip.mp-tip b { font-weight: 500; }
+.leaflet-tooltip.mp-tip span { color: var(--paper-dim); }
+
+/* 写真ピン。Leaflet が .leaflet-marker-icon に position:absolute と transform を付けて
+   配置するため、ラッパー(.pin-wrap)には position を指定しない（指定するとずれる） */
+.pin {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #fff;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--ink-3);
+  box-shadow: 0 0 0 1px rgba(11, 12, 14, 0.35), 0 6px 14px rgba(11, 12, 14, 0.35);
+  transition: transform 0.35s var(--ease-out), border-color 0.3s;
+  cursor: pointer;
+}
+.pin img {
+  /* Leaflet の .leaflet-marker-pane img { width:auto } を上書き */
+  width: 100% !important;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pin-stem {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  width: 1px;
+  height: 8px;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+.pin-wrap:hover .pin,
+.pin-wrap.is-hot .pin { transform: translateY(-4px) scale(1.1); border-color: var(--ink); }
+.pin-wrap.is-hot { z-index: 10000 !important; }
+.pin-count {
+  position: absolute;
+  top: -9px;
+  right: -11px;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 10px/20px var(--f-mono);
+  text-align: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.pin.is-cluster img { filter: brightness(0.8); }
+
+/* ---------- 一覧パネル ---------- */
+.mp-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--line);
+  background: var(--ink);
+}
+.mp-head { padding: 28px 28px 22px; border-bottom: 1px solid var(--line); }
+.mp-head .eyebrow { margin: 0; color: var(--paper-dim); }
+.mp-title {
+  margin: 14px 0 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(40px, 3.6vw, 60px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.mp-title em { font-style: italic; color: #cfe0e7; }
+.mp-stats { margin: 22px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mp-stats dt { color: var(--paper-faint); }
+.mp-stats dd { margin: 6px 0 0; color: var(--paper); font-size: 13px; }
+
+.mp-days {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  padding: 16px 28px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.mp-days button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  padding-top: 9px;
+  border-top: 3px solid var(--c, var(--paper));
+  font: 11px var(--f-mono);
+  letter-spacing: 0.04em;
+  color: var(--paper-faint);
+  text-align: left;
+  opacity: 0.55;
+  transition: opacity 0.3s, color 0.3s;
+}
+.mp-days button:hover { opacity: 1; color: var(--paper-dim); }
+.mp-days button[aria-pressed="true"] { opacity: 1; color: var(--paper); }
+.mp-days button:focus-visible { outline: 2px solid var(--glacier); outline-offset: 3px; }
+
+.mp-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 40px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 233, 226, 0.18) transparent;
+}
+.mp-sep {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px 10px;
+  background: linear-gradient(var(--ink) 75%, rgba(11, 12, 14, 0));
+  color: var(--paper-dim);
+}
+.mp-sep i { width: 14px; height: 3px; background: var(--c); flex: none; }
+.mp-sep b { color: var(--paper); font-weight: 500; }
+.mp-item {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 8px 28px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.25s;
+}
+.mp-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--glacier);
+  transform: scaleY(0);
+  transition: transform 0.35s var(--ease-out);
+}
+.mp-item:hover { background: rgba(236, 233, 226, 0.04); }
+.mp-item.is-active::before { transform: scaleY(1); }
+.mp-item:focus-visible { outline: 2px solid var(--glacier); outline-offset: -2px; }
+.mp-item img {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.9);
+  transition: filter 0.3s;
+}
+.mp-item:hover img, .mp-item.is-active img { filter: none; }
+.mp-item .t {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mp-item .d { display: block; margin-top: 4px; color: var(--paper-faint); }
+.mp-item .d b { color: var(--paper-dim); font-weight: 400; margin-right: 10px; }
+
+/* ---------- 写真ビューア ---------- */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 26vw, 400px);
+  background: rgba(6, 7, 8, 0);
+  transition: background 0.45s var(--ease-out);
+}
+.viewer[hidden] { display: none; }
+.viewer.is-open { background: #060708; }
+.v-figure {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 96px;
+}
+#v-img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 80px);
+  max-height: calc(100svh - 80px);
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.5s var(--ease-out), transform 0.7s var(--ease-out);
+  user-select: none;
+}
+.viewer.is-open #v-img.is-loaded { opacity: 1; transform: none; }
+.v-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 88px 32px 40px;
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.6s var(--ease-out) 0.1s, transform 0.6s var(--ease-out) 0.1s;
+}
+.viewer.is-open .v-info { opacity: 1; transform: none; }
+.v-count { margin: 0; color: var(--paper-dim); }
+.v-count b { color: var(--paper); font-weight: 500; }
+.v-title {
+  margin: 14px 0 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(34px, 2.8vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+.v-comment {
+  margin: 18px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(236, 233, 226, 0.82);
+}
+.v-comment:empty { display: none; }
+.v-meta { margin: 28px 0 0; }
+.v-meta > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+.v-meta > div:last-child { border-bottom: 1px solid var(--line); }
+.v-meta dt { color: var(--paper-faint); }
+.v-meta dd { margin: 0; color: var(--paper); text-align: right; text-transform: none; }
+
+/* ボタン（ライトボックスの映写画面と共通の見た目） */
+.p-btn {
+  position: absolute;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 233, 226, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.4s, background 0.3s, border-color 0.3s, transform 0.4s var(--ease-out);
+}
+.viewer.is-open .p-btn { opacity: 1; }
+.p-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(236, 233, 226, 0.4); }
+.p-close { top: 20px; right: 24px; }
+.p-close:hover { transform: rotate(90deg); }
+.p-prev, .p-next { top: 50%; margin-top: -24px; }
+.p-prev { left: 24px; }
+.p-next { right: calc(clamp(300px, 26vw, 400px) + 24px); }
+.p-prev:hover { transform: translateX(-3px); }
+.p-next:hover { transform: translateX(3px); }
+
+/* ---------- スマホ ---------- */
+@media (max-width: 900px) {
+  .mp { display: block; height: auto; }
+  .mp-map { height: 58vh; height: 58svh; }
+  .mp-panel { border-left: 0; border-top: 1px solid var(--line); }
+  .mp-head { padding: 24px var(--gutter) 18px; }
+  .mp-days { padding: 14px var(--gutter) 16px; position: sticky; top: 0; z-index: 3; background: var(--ink); }
+  .mp-list { overflow: visible; padding-bottom: 24px; }
+  .mp-sep { top: 56px; padding-left: var(--gutter); padding-right: var(--gutter); }
+  .mp-item { padding: 8px var(--gutter); }
+  .mp-daylabel { font-size: 22px; left: 14px; bottom: 14px; max-width: calc(100% - 80px); }
+
+  .viewer { display: block; overflow-y: auto; }
+  .v-figure { padding: 64px 0 0; min-height: 60vh; min-height: 60svh; }
+  #v-img { max-height: 70svh; }
+  .v-info { border-left: 0; padding: 24px var(--gutter) 48px; justify-content: flex-start; transform: none; }
+  .p-close { top: 10px; right: 10px; }
+  /* 前後ボタンは写真の上の空き（閉じるボタンと同じ高さ）に置き、写真や文字に重ねない */
+  .p-prev, .p-next { position: fixed; top: 10px; bottom: auto; margin-top: 0; background: rgba(0, 0, 0, 0.55); }
+  .p-prev { left: 10px; }
+  .p-next { left: 66px; right: auto; }
+  .p-prev:hover, .p-next:hover { transform: none; }
+  .viewer.hide-controls .p-btn { opacity: 0; pointer-events: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin, .mp-daylabel, #v-img, .v-info, .viewer, .p-btn { transition: none; }
+}
