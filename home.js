@@ -30,15 +30,13 @@ const CHAPTER_PHOTOS = {
   "2026-07-16": "0L7A2693",
   "2026-07-17": "0L7A2745"
 };
-const HERO_ID = "0L7A2707";
 
 // ---------- 文字の差し込み ----------
 const first = DATES[0], last = DATES[DATES.length - 1];
 document.getElementById("m-dates").textContent = `${first.slice(8, 10)} — ${ddmm(last)}.${last.slice(0, 4)}`;
 document.getElementById("m-km").textContent = `${fmt(TOTAL_KM)} km`;
 document.getElementById("m-frames").textContent = `${PHOTOS.length} digital + ${FILMS.length} film`;
-const hero = photoByFile(HERO_ID);
-if (hero) document.getElementById("m-cover").textContent = `${hero.title}, ${ddmm(hero.date.slice(0, 10))} ${hero.date.slice(11)}`;
+
 // 数字を英単語に（例: 100 → One hundred, 35 → thirty-five）
 function words(n) {
   const a = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
@@ -94,6 +92,96 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
     requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
+})();
+
+// ---------- ヒーローの動画と音声 ----------
+(function heroFilm() {
+  const video = document.getElementById("hero-video");
+  const btn = document.getElementById("sound-toggle");
+  const label = btn.querySelector(".sound-label");
+  const heroEl = document.querySelector(".hero");
+  const saveData = navigator.connection && navigator.connection.saveData;
+  // 動きを減らす設定・データセーバーのときは動画を読み込まず、静止画のまま
+  if (reduceMotion || saveData) return;
+
+  // 縦長の画面（スマホを縦に持った状態など）には、中央を縦に切り出した専用の動画と静止画を使う
+  if (window.matchMedia("(max-aspect-ratio: 1/1)").matches) {
+    video.innerHTML = `
+      <source src="video/iceland-m-hevc.mp4" type='video/mp4; codecs="hvc1"' />
+      <source src="video/iceland-m-h264.mp4" type="video/mp4" />`;
+    const poster = document.querySelector(".hero-poster");
+    poster.removeAttribute("srcset");
+    poster.src = "video/iceland-m-poster.jpg";
+  }
+  video.preload = "auto";
+  video.muted = true;
+  video.load();
+  // 音付きの再生がブラウザに止められたら、消音にして映像だけ再開する
+  const start = () => video.play().catch(() => {
+    if (!video.muted) {
+      setSound(false, true);
+      video.play().catch(() => {});
+    }
+  });
+  video.addEventListener("playing", () => document.body.classList.add("film-on"), { once: true });
+  video.addEventListener("loadedmetadata", () => {
+    const d = Math.round(video.duration);
+    if (d) document.getElementById("m-cover").textContent = `ICELAND · ${Math.floor(d / 60)}:${String(d % 60).padStart(2, "0")}`;
+  });
+  start();
+  btn.hidden = false;
+
+  // 音量をなめらかに上げ下げする（iOS は音量を変えられないので即時に切り替わる）
+  let fadeRaf = 0;
+  function fadeTo(target, ms, done) {
+    cancelAnimationFrame(fadeRaf);
+    const from = video.volume, t0 = performance.now();
+    const step = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      video.volume = from + (target - from) * k;
+      if (k < 1) fadeRaf = requestAnimationFrame(step);
+      else if (done) done();
+    };
+    fadeRaf = requestAnimationFrame(step);
+  }
+  let soundOn = false;
+  function setSound(on, instant) {
+    soundOn = on;
+    btn.setAttribute("aria-pressed", String(on));
+    label.textContent = on ? "Sound on" : "Sound off";
+    btn.classList.toggle("is-on", on);
+    if (on) {
+      video.muted = false;
+      video.volume = 0;
+      if (video.paused) start();
+      fadeTo(1, 700);
+    } else if (instant) {
+      cancelAnimationFrame(fadeRaf);
+      video.muted = true;
+    } else {
+      fadeTo(0, 400, () => { if (!soundOn) video.muted = true; });
+    }
+  }
+  btn.addEventListener("click", () => setSound(!soundOn));
+
+  // ヒーローが画面から外れたら一時停止（音も止まる）。戻ったら再開
+  let heroVisible = true;
+  new IntersectionObserver(entries => {
+    heroVisible = entries[0].isIntersecting;
+    if (heroVisible && !document.hidden) start();
+    else video.pause();
+  }, { threshold: 0 }).observe(heroEl);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) video.pause();
+    else if (heroVisible) start();
+  });
+  // ヒーローから離れるほど音を小さくする
+  window.addEventListener("scroll", () => {
+    if (!soundOn || video.muted) return;
+    const k = Math.max(0, 1 - window.scrollY / (heroEl.offsetHeight * 0.9));
+    cancelAnimationFrame(fadeRaf);
+    video.volume = k;
+  }, { passive: true });
 })();
 
 // ---------- ヒーローの視差 ----------

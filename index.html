@@ -13,9 +13,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" />
-<link rel="preload" as="image" href="images/site/hero.jpg" imagesrcset="images/site/hero-1280.jpg 1280w, images/site/hero.jpg 2560w" imagesizes="100vw" fetchpriority="high" />
-<link rel="stylesheet" href="site.css?v=20261003d" />
-<link rel="stylesheet" href="home.css?v=20261003d" />
+<link rel="preload" as="image" href="video/iceland-poster.jpg" imagesrcset="video/iceland-poster-1000.jpg 1000w, video/iceland-poster.jpg 1600w" imagesizes="100vw" fetchpriority="high" />
+<link rel="stylesheet" href="site.css?v=20261004b" />
+<link rel="stylesheet" href="home.css?v=20261004b" />
 <script>
   // 初回訪問だけイントロを出す（ストレージが使えない環境では出さない）
   try { if (!sessionStorage.getItem("introSeen")) document.documentElement.classList.add("has-intro"); } catch (e) {}
@@ -41,15 +41,31 @@
 <main id="top">
   <!-- ヒーロー -->
   <section class="hero">
-    <div class="hero-media"><img src="images/site/hero.jpg" srcset="images/site/hero-1280.jpg 1280w, images/site/hero.jpg 2560w" sizes="100vw" alt="Kirkjufell above Kirkjufellsfoss on a grey summer evening" fetchpriority="high" /></div>
+    <div class="hero-media">
+      <!-- 動画が流れるまで（または動画を流さない設定のとき）は冒頭のコマの静止画 -->
+      <img class="hero-poster" src="video/iceland-poster.jpg" srcset="video/iceland-poster-1000.jpg 1000w, video/iceland-poster.jpg 1600w" sizes="100vw" alt="Opening frame of the film: a waterfall over dark rocks" fetchpriority="high" />
+      <video class="hero-video" id="hero-video" muted loop playsinline preload="none" aria-label="ICELAND — a short film from the trip">
+        <source src="video/iceland-hevc.mp4" type='video/mp4; codecs="hvc1"' />
+        <source src="video/iceland-h264.mp4" type="video/mp4" />
+      </video>
+    </div>
     <div class="hero-inner">
       <p class="hero-kicker mono"><span class="line"><span>A road trip around the island</span></span></p>
-      <h1 class="hero-title"><span class="line"><span>Iceland</span></span></h1>
+      <div class="hero-row">
+        <h1 class="hero-title"><span class="line"><span>Iceland</span></span></h1>
+        <div class="hero-controls">
+          <button type="button" class="sound-toggle mono" id="sound-toggle" aria-pressed="false" hidden>
+            <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="sound-label">Sound off</span>
+          </button>
+          <a class="yt-link mono" href="https://youtu.be/z1tOhMRpaDQ" target="_blank" rel="noopener">Watch on YouTube <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
       <dl class="hero-meta mono">
         <div><dt>Dates</dt><dd id="m-dates"></dd></div>
         <div><dt>Distance</dt><dd id="m-km"></dd></div>
         <div><dt>Frames</dt><dd id="m-frames"></dd></div>
-        <div><dt>Cover</dt><dd id="m-cover"></dd></div>
+        <div><dt>Film</dt><dd id="m-cover">ICELAND</dd></div>
       </dl>
     </div>
     <div class="scroll-cue mono" aria-hidden="true"><span>Scroll</span><i></i></div>
@@ -136,11 +152,11 @@
 </footer>
 
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="data.js?v=20261003d"></script>
-<script src="routes.js?v=20261003d"></script>
-<script src="film.js?v=20261003d"></script>
-<script src="site.js?v=20261003d"></script>
-<script src="slides.js?v=20261003d"></script>
-<script src="home.js?v=20261003d"></script>
+<script src="data.js?v=20261004b"></script>
+<script src="routes.js?v=20261004b"></script>
+<script src="film.js?v=20261004b"></script>
+<script src="site.js?v=20261004b"></script>
+<script src="slides.js?v=20261004b"></script>
+<script src="home.js?v=20261004b"></script>
 </body>
 </html>
