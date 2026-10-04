@@ -107,8 +107,8 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
   // 縦長の画面（スマホを縦に持った状態など）には、中央を縦に切り出した専用の動画と静止画を使う
   if (window.matchMedia("(max-aspect-ratio: 1/1)").matches) {
     video.innerHTML = `
-      <source src="video/iceland-m-hevc.mp4" type='video/mp4; codecs="hvc1"' />
-      <source src="video/iceland-m-h264.mp4" type="video/mp4" />`;
+      <source src="video/iceland-m-hevc.mp4?v=2" type='video/mp4; codecs="hvc1"' />
+      <source src="video/iceland-m-h264.mp4?v=2" type="video/mp4" />`;
     const poster = document.querySelector(".hero-poster");
     poster.removeAttribute("srcset");
     poster.src = "video/iceland-m-poster.jpg";
@@ -395,6 +395,43 @@ function el(name, attrs = {}, parent) {
   const dup = film();
   dup.setAttribute("aria-hidden", "true");
   track.appendChild(dup);
+
+  // 横に流す: 1本分の幅だけ進んだら先頭に戻す（2本目は1本目の複製なので継ぎ目が見えない）。
+  // CSS アニメーションは長い要素だと端末によって止まることがあるため、毎フレーム自分で位置を計算する
+  const strip = track.parentElement;
+  const first = track.firstElementChild;
+  const SECONDS_PER_LOOP = reduceMotion ? 220 : 110; // 動きを減らす設定ではゆっくり
+  let setW = 0, x = 0, last = 0, visible = false, running = false;
+  const measure = () => {
+    const w = first.getBoundingClientRect().width;
+    if (setW && w) x = (x / setW) * w; // 大きさが変わっても同じ位置を保つ
+    setW = w;
+  };
+  function frame(now) {
+    if (!visible || document.hidden) { running = false; return; }
+    const dt = Math.min(0.05, (now - last) / 1000); // タブ復帰時などに大きく飛ばない
+    last = now;
+    if (!setW) measure();
+    if (setW) {
+      x -= (setW / SECONDS_PER_LOOP) * dt;
+      if (x <= -setW) x += setW;
+      track.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+    }
+    requestAnimationFrame(frame);
+  }
+  const startLoop = () => {
+    if (running || !visible || document.hidden) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(frame);
+  };
+  new IntersectionObserver(entries => {
+    visible = entries[0].isIntersecting;
+    startLoop();
+  }, { rootMargin: "200px 0px" }).observe(strip);
+  document.addEventListener("visibilitychange", startLoop);
+  window.addEventListener("resize", measure);
+  if (document.fonts) document.fonts.ready.then(measure);
 })();
 
 // ---------- 一番上へ ----------

@@ -397,9 +397,8 @@ body.is-ready .hero-meta { opacity: 1; transform: none; }
 .strip-track {
   display: flex;
   width: max-content;
-  animation: marquee 110s linear infinite;
+  will-change: transform; /* 動きは home.js で毎フレーム計算（どの端末でも確実に流れるように） */
 }
-@keyframes marquee { to { transform: translateX(-50%); } }
 .film {
   --fh: clamp(120px, 15vw, 190px);  /* コマの高さ */
   --fw: calc(var(--fh) * 1.5);
@@ -575,7 +574,6 @@ body.is-ready .hero-meta { opacity: 1; transform: none; }
   .hero-media img, .hero .line > span, .hero-meta { transition: none; transform: none; opacity: 1; }
   .sound-toggle .eq i { animation: none; }
   .ch-media, .ch-media img { transition: none; clip-path: none; transform: none; }
-  .strip-track { animation: none; }
   .enter-arrow { animation: none; }
   html.has-intro .intro { display: none; }
 }
