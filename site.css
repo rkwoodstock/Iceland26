@@ -270,9 +270,9 @@ html.is-leaving .curtain {
   margin: 0 0 0 -0.04em;
   font-family: var(--f-display);
   font-style: italic;
-  font-size: clamp(130px, 31vw, 560px);
-  line-height: 0.8;
-  letter-spacing: -0.045em;
+  font-size: clamp(56px, 7vw, 120px);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
 }
 .footer-note { margin: 22px 0 0; font-size: 14px; color: var(--paper-dim); }
 .footer-grid {
