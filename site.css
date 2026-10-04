@@ -266,15 +266,9 @@ html.is-leaving .curtain {
   border-top: 1px solid var(--line);
   overflow: hidden;
 }
-.footer-big {
-  margin: 0 0 0 -0.04em;
-  font-family: var(--f-display);
-  font-style: italic;
-  font-size: clamp(56px, 7vw, 120px);
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-}
 .footer-note { margin: 22px 0 0; font-size: 14px; color: var(--paper-dim); }
+.site-footer--compact { padding-top: 40px; }
+.site-footer--compact .footer-grid { margin-top: 0; padding-top: 0; border-top: 0; }
 .footer-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -288,7 +282,6 @@ html.is-leaving .curtain {
 .footer-top { justify-self: end; }
 .footer-top a { text-decoration: none; color: var(--paper); }
 .footer-top a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.footer-note em { font-family: var(--f-display); font-size: 1.15em; }
 /* 次のページへの大きなリンク */
 .footer-next {
   display: inline-flex;
