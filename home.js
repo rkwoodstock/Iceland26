@@ -97,8 +97,9 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
 // ---------- ヒーローの動画と音声 ----------
 (function heroFilm() {
   const video = document.getElementById("hero-video");
-  const btn = document.getElementById("sound-toggle");
-  const label = btn.querySelector(".sound-label");
+  // ヒーロー内のボタンと、スクロール後も右下に付いてくるボタン（同じ状態を共有）
+  const btns = [document.getElementById("sound-toggle"), document.getElementById("sound-float")];
+  const floatBtn = btns[1];
   const heroEl = document.querySelector(".hero");
   const saveData = navigator.connection && navigator.connection.saveData;
   // 動きを減らす設定・データセーバーのときは動画を読み込まず、静止画のまま
@@ -129,7 +130,7 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
     if (d) document.getElementById("m-cover").textContent = `ICELAND · ${Math.floor(d / 60)}:${String(d % 60).padStart(2, "0")}`;
   });
   start();
-  btn.hidden = false;
+  btns.forEach(b => { b.hidden = false; });
 
   // 音量をなめらかに上げ下げする（iOS は音量を変えられないので即時に切り替わる）
   let fadeRaf = 0;
@@ -137,8 +138,9 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
     cancelAnimationFrame(fadeRaf);
     const from = video.volume, t0 = performance.now();
     const step = now => {
-      const k = Math.min(1, (now - t0) / ms);
-      video.volume = from + (target - from) * k;
+      // requestAnimationFrame の時刻は t0 より少し前のことがあるので 0〜1 に収める
+      const k = Math.min(1, Math.max(0, (now - t0) / ms));
+      video.volume = Math.min(1, Math.max(0, from + (target - from) * k));
       if (k < 1) fadeRaf = requestAnimationFrame(step);
       else if (done) done();
     };
@@ -147,9 +149,11 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
   let soundOn = false;
   function setSound(on, instant) {
     soundOn = on;
-    btn.setAttribute("aria-pressed", String(on));
-    label.textContent = on ? "Sound on" : "Sound off";
-    btn.classList.toggle("is-on", on);
+    btns.forEach(b => {
+      b.setAttribute("aria-pressed", String(on));
+      b.querySelector(".sound-label").textContent = on ? "Sound on" : "Sound off";
+      b.classList.toggle("is-on", on);
+    });
     if (on) {
       video.muted = false;
       video.volume = 0;
@@ -159,29 +163,30 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM $
       cancelAnimationFrame(fadeRaf);
       video.muted = true;
     } else {
-      fadeTo(0, 400, () => { if (!soundOn) video.muted = true; });
+      fadeTo(0, 400, () => {
+        if (soundOn) return;
+        video.muted = true;
+        if (!heroVisible) video.pause(); // 画面外で音を消したら、映像も止めて負荷を下げる
+      });
     }
   }
-  btn.addEventListener("click", () => setSound(!soundOn));
+  btns.forEach(b => b.addEventListener("click", () => setSound(!soundOn)));
 
-  // ヒーローが画面から外れたら一時停止（音も止まる）。戻ったら再開
+  // ヒーローが画面から外れたら：音声オフなら一時停止、音声オンなら音楽を流し続ける。
+  // あわせて、右下に付いてくるサウンドボタンを出す
   let heroVisible = true;
   new IntersectionObserver(entries => {
     heroVisible = entries[0].isIntersecting;
-    if (heroVisible && !document.hidden) start();
+    floatBtn.classList.toggle("is-shown", !heroVisible);
+    if (document.hidden) return;
+    if (heroVisible || soundOn) start();
     else video.pause();
   }, { threshold: 0 }).observe(heroEl);
+  // 別のタブに切り替えている間は止め、戻ったら再開
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) video.pause();
-    else if (heroVisible) start();
+    else if (heroVisible || soundOn) start();
   });
-  // ヒーローから離れるほど音を小さくする
-  window.addEventListener("scroll", () => {
-    if (!soundOn || video.muted) return;
-    const k = Math.max(0, 1 - window.scrollY / (heroEl.offsetHeight * 0.9));
-    cancelAnimationFrame(fadeRaf);
-    video.volume = k;
-  }, { passive: true });
 })();
 
 // ---------- ヒーローの視差 ----------

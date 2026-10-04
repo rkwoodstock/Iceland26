@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" />
 <link rel="preload" as="image" href="video/iceland-poster.jpg" imagesrcset="video/iceland-poster-1000.jpg 1000w, video/iceland-poster.jpg 1600w" imagesizes="100vw" fetchpriority="high" />
-<link rel="stylesheet" href="site.css?v=20261005a" />
-<link rel="stylesheet" href="home.css?v=20261005a" />
+<link rel="stylesheet" href="site.css?v=20261006a" />
+<link rel="stylesheet" href="home.css?v=20261006a" />
 <script>
   // 初回訪問だけイントロを出す（ストレージが使えない環境では出さない）
   try { if (!sessionStorage.getItem("introSeen")) document.documentElement.classList.add("has-intro"); } catch (e) {}
@@ -140,6 +140,12 @@
   </section>
 </main>
 
+<!-- 動画の範囲を過ぎても、右下で音声のオン・オフを切り替えられるボタン -->
+<button type="button" class="sound-float mono" id="sound-float" aria-pressed="false" aria-label="Film sound" hidden>
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  <span class="sound-label">Sound off</span>
+</button>
+
 <footer class="site-footer">
   <p class="footer-big" aria-hidden="true">Bless.</p>
   <p class="footer-note">“Bless” — Icelandic for <em>see you.</em></p>
@@ -152,11 +158,11 @@
 </footer>
 
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="data.js?v=20261005a"></script>
-<script src="routes.js?v=20261005a"></script>
-<script src="film.js?v=20261005a"></script>
-<script src="site.js?v=20261005a"></script>
-<script src="slides.js?v=20261005a"></script>
-<script src="home.js?v=20261005a"></script>
+<script src="data.js?v=20261006a"></script>
+<script src="routes.js?v=20261006a"></script>
+<script src="film.js?v=20261006a"></script>
+<script src="site.js?v=20261006a"></script>
+<script src="slides.js?v=20261006a"></script>
+<script src="home.js?v=20261006a"></script>
 </body>
 </html>
