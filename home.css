@@ -24,13 +24,19 @@ html.has-intro .intro.is-done { clip-path: inset(0 0 100% 0); }
   font-size: clamp(88px, 17vw, 260px);
   line-height: 1;
   letter-spacing: -0.03em;
-  padding: 0 0.25em 0.12em;
+  padding: 0.3em 0.25em 0.12em;
 }
 .intro-word span {
   display: inline-block;
-  transform: translateY(110%);
+  /* 斜体の飾りは文字の枠からはみ出す。動いている間（iOS Safari）に切れないよう、
+     1文字ずつの枠にも余白を取り、その分だけ外側へずらして文字間隔は保つ */
+  padding: 0.25em 0.15em 0.15em;
+  margin: -0.25em -0.15em -0.15em;
+  transform: translateY(150%);
   animation: intro-rise 1.1s var(--ease-out) forwards;
+  animation-play-state: paused; /* 書体が届いてから動かし始める（home.js が intro-go を付ける） */
 }
+html.intro-go .intro-word span { animation-play-state: running; }
 .intro-word span:nth-child(1) { animation-delay: 0.10s; }
 .intro-word span:nth-child(2) { animation-delay: 0.16s; }
 .intro-word span:nth-child(3) { animation-delay: 0.22s; }
@@ -200,9 +206,11 @@ body.is-ready .sound-toggle { opacity: 1; transform: none; }
   font-size: clamp(116px, 25vw, 420px);
   line-height: 0.78;
   letter-spacing: -0.04em;
+  /* 動画の明るい場面（滝のしぶきなど）でも、白い文字の輪郭が背景に溶けて欠けて見えないように */
+  text-shadow: 0 0 1px rgba(11, 12, 14, 0.25), 0 2px 24px rgba(11, 12, 14, 0.35);
 }
-.hero-title .line { padding-bottom: 0.12em; margin-bottom: -0.12em; }
-.hero .line > span { transform: translateY(105%); transition: transform 1.5s var(--ease-out) 0.15s; }
+.hero-title .line { padding-bottom: 0.12em; margin-bottom: -0.12em; }  /* 上・左右は site.css の .line の余白を使う */
+.hero .line > span { transform: translateY(140%); transition: transform 1.5s var(--ease-out) 0.15s; }
 .hero-kicker .line > span { transition-delay: 0.35s; }
 body.is-ready .hero .line > span { transform: none; }
 

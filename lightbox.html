@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" />
-<link rel="stylesheet" href="site.css?v=20261010a" />
-<link rel="stylesheet" href="slides.css?v=20261010a" />
-<link rel="stylesheet" href="lightbox.css?v=20261010a" />
+<link rel="stylesheet" href="site.css?v=20261010d" />
+<link rel="stylesheet" href="slides.css?v=20261010d" />
+<link rel="stylesheet" href="lightbox.css?v=20261010d" />
 </head>
 <body class="page-lightbox">
 
@@ -59,7 +59,14 @@
     <div class="table-tools">
       <p class="hint mono"><span class="hint-fine">Drag to move · Click to project · Hover with the loupe</span><span class="hint-touch">Tap a slide to project</span></p>
       <div class="tool-btns">
-        <button type="button" class="tool mono" id="btn-loupe" aria-pressed="true">Loupe <kbd>L</kbd></button>
+        <button type="button" class="loupe-switch mono" id="btn-loupe" role="switch" aria-checked="true" aria-label="Loupe" title="Loupe (L)">
+          <svg class="ls-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+          <span class="ls-name">Loupe</span>
+          <span class="ls-track" aria-hidden="true"><i></i></span>
+          <span class="ls-state" aria-hidden="true">On</span>
+          <kbd aria-hidden="true">L</kbd>
+        </button>
+        <span class="tool-sep" aria-hidden="true"></span>
         <button type="button" class="tool mono" id="btn-tidy">Tidy</button>
         <button type="button" class="tool mono" id="btn-scatter">Scatter</button>
       </div>
@@ -102,9 +109,9 @@
 </div>
 
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="film.js?v=20261010a"></script>
-<script src="site.js?v=20261010a"></script>
-<script src="slides.js?v=20261010a"></script>
-<script src="lightbox.js?v=20261010a"></script>
+<script src="film.js?v=20261010d"></script>
+<script src="site.js?v=20261010d"></script>
+<script src="slides.js?v=20261010d"></script>
+<script src="lightbox.js?v=20261010d"></script>
 </body>
 </html>

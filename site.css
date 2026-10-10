@@ -217,11 +217,11 @@ html.is-leaving .curtain {
 [data-reveal].is-in { opacity: 1; transform: none; }
 
 /* 行ごとにマスクから持ち上がる文字 */
-/* 斜体やセリフ（文字の飾り）が枠からはみ出して切れないよう、左右にも余白を取り、その分だけ外側へずらす */
-.line { display: block; overflow: hidden; padding: 0 0.12em 0.08em; margin: 0 -0.12em -0.08em; }
+/* 文字は行の高さより上下・左右にはみ出す（大文字の上の飾りや斜体）。切れないよう枠に余白を取り、その分だけ外側へずらす */
+.line { display: block; overflow: hidden; padding: 0.3em 0.12em 0.08em; margin: -0.3em -0.12em -0.08em; }
 .line > span {
   display: inline-block;
-  transform: translateY(105%);
+  transform: translateY(140%);
   transition: transform 1.2s var(--ease-out);
   transition-delay: var(--d, 0s);
 }

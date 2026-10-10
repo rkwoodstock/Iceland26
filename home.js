@@ -73,6 +73,12 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>${FILM_CAM
   const bar = document.getElementById("intro-bar");
   let shown = 0, target = 0, done = false;
   const start = performance.now();
+  // 斜体の書体が届いてから文字を動かす（届く前に代わりの書体で動いて、途中で形が変わるのを防ぐ）
+  let goAt = Infinity;
+  const go = () => { if (goAt === Infinity) { goAt = performance.now(); html.classList.add("intro-go"); } };
+  const introFont = document.fonts ? document.fonts.load('italic 100px "Instrument Serif"') : Promise.resolve();
+  introFont.then(go, go);
+  setTimeout(go, 1500); // 書体が遅いときも長くは待たせない
   Promise.all([imgReady, fontsReady]).then(() => { done = true; });
   setTimeout(() => { done = true; }, 4500); // 回線が遅くても長く待たせない
   const step = now => {
@@ -82,7 +88,8 @@ document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>${FILM_CAM
     const v = Math.min(100, Math.round(shown));
     count.textContent = String(v).padStart(3, "0");
     bar.style.transform = `scaleX(${v / 100})`;
-    if (v >= 100 && t > 1.5) {
+    // 100% になり、かつ文字が出そろって（動き始めから約1.7秒）から幕を上げる
+    if (v >= 100 && t > 1.5 && now - goAt > 1700) {
       intro.classList.add("is-done");
       try { sessionStorage.setItem("introSeen", "1"); } catch (e) {}
       setTimeout(ready, 250);

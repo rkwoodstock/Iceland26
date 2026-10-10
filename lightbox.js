@@ -150,7 +150,8 @@ const loupeBtn = $("#btn-loupe");
 const hiRes = new Set();
 function setLoupe(on) {
   loupeOn = on && finePointer;
-  loupeBtn.setAttribute("aria-pressed", String(loupeOn));
+  loupeBtn.setAttribute("aria-checked", String(loupeOn));
+  loupeBtn.querySelector(".ls-state").textContent = loupeOn ? "On" : "Off";
   surface.classList.toggle("loupe-active", loupeOn);
   if (!loupeOn) hideLens();
   else if (slidesEl.classList.contains("placed") || !slidesEl.classList.contains("pre")) parkLens();
