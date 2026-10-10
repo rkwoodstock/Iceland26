@@ -24,7 +24,7 @@ html.has-intro .intro.is-done { clip-path: inset(0 0 100% 0); }
   font-size: clamp(88px, 17vw, 260px);
   line-height: 1;
   letter-spacing: -0.03em;
-  padding: 0 0.06em 0.08em;
+  padding: 0 0.25em 0.12em;
 }
 .intro-word span {
   display: inline-block;

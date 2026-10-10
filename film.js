@@ -1,7 +1,8 @@
-// フィルム写真（FUJIFILM PROVIA 100F・35mm リバーサル）のスキャンデータ。
+// フィルム写真（Nikon New FM2 で撮影、FUJIFILM PROVIA 100F・35mm リバーサル）のスキャンデータ。
 // portrait: true は縦位置のコマ（スキャン時に横向きだったものを回転済み）。
 // title に地名などを書くと、拡大表示のキャプションに表示されます（空欄なら非表示）。
 const FILM_STOCK = "PROVIA 100F";
+const FILM_CAMERA = "Nikon New FM2";
 const FILMS = [
   { id: 1, file: "images/film/01.jpg", thumb: "images/film/thumbs/01.jpg", portrait: true, title: "" },
   { id: 2, file: "images/film/02.jpg", thumb: "images/film/thumbs/02.jpg", portrait: false, title: "" },

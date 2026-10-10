@@ -337,6 +337,14 @@
   color: rgba(236, 233, 226, 0.82);
 }
 .v-comment:empty { display: none; }
+.v-comment-ja {
+  margin: 8px 0 0;
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--paper-dim);
+}
+.v-comment-ja:empty { display: none; }
 .v-meta { margin: 28px 0 0; }
 .v-meta > div {
   display: flex;

@@ -51,8 +51,8 @@ document.querySelector(".days-num").textContent = cap(words(DATES.length));
 document.querySelector(".digital-num").textContent = cap(words(PHOTOS.length));
 document.querySelector(".film-num").textContent = words(FILMS.length);
 document.getElementById("enter-map-meta").textContent = `${PHOTOS.length} frames · ${DATES.length} days · ${fmt(TOTAL_KM)} km`;
-document.getElementById("enter-lb-meta").textContent = `${FILMS.length} frames · FUJIFILM ${FILM_STOCK}`;
-document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>FUJIFILM ${FILM_STOCK}`;
+document.getElementById("enter-lb-meta").textContent = `${FILMS.length} frames · ${FILM_CAMERA} · ${FILM_STOCK}`;
+document.getElementById("f-gear").innerHTML = `${PHOTOS[0].camera}<br>${FILM_CAMERA} · ${FILM_STOCK}`;
 
 // ---------- イントロ → ヒーロー ----------
 (function intro() {

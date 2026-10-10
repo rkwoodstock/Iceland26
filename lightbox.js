@@ -10,6 +10,7 @@ const N = FILMS.length;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
 document.querySelectorAll(".stock").forEach(e => { e.textContent = FILM_STOCK; });
+document.querySelectorAll(".camera").forEach(e => { e.textContent = FILM_CAMERA; });
 document.querySelectorAll(".count").forEach(e => { e.textContent = `${N} slides`; });
 
 // ---------- スライドを作る ----------
@@ -244,7 +245,7 @@ function caption(i) {
   const f = FILMS[i];
   $("#proj-count").textContent = `№ ${pad2(f.id)} / ${N}`;
   $("#proj-title").textContent = f.title || "";
-  $("#proj-meta").textContent = `${FILM_STOCK} · 35 mm`;
+  $("#proj-meta").textContent = `${FILM_CAMERA} · ${FILM_STOCK}`;
   pimg.alt = f.title || `Film frame ${pad2(f.id)}`;
 }
 function loadHi(i) {
@@ -333,8 +334,9 @@ function step(delta) {
 $("#proj-close").addEventListener("click", closeProjector);
 $("#proj-prev").addEventListener("click", e => { e.stopPropagation(); step(-1); showControls(); });
 $("#proj-next").addEventListener("click", e => { e.stopPropagation(); step(1); showControls(); });
+// 写真とボタン以外の空いている所を押したら閉じる（PC・スマホ共通）
 proj.addEventListener("click", e => {
-  if (e.target === proj && !isMobileView()) closeProjector();
+  if (!e.target.closest("#proj-img, .p-btn")) closeProjector();
 });
 
 document.addEventListener("keydown", e => {

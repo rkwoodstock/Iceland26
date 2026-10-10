@@ -220,6 +220,7 @@ function showPhoto(pos) {
   document.getElementById("v-count").innerHTML = `<b>№ ${pad3(numberOf.get(p.id))}</b> / ${pad3(PHOTOS.length)}${n > 1 && n < PHOTOS.length ? ` — ${vPos + 1} of ${n}` : ""}`;
   document.getElementById("v-title").textContent = p.title;
   document.getElementById("v-comment").textContent = p.desc || "";
+  document.getElementById("v-comment-ja").textContent = p.descJa || "";
   document.getElementById("v-date").textContent = `Day ${pad2(dayIndex(d) + 1)} · ${ddmm(d)}.${d.slice(0, 4)} ${p.date.slice(11)}`;
   document.getElementById("v-camera").textContent = p.camera || "—";
   document.getElementById("v-lens").textContent = p.lens || "—";
@@ -258,8 +259,9 @@ function showControls() {
 document.getElementById("v-close").addEventListener("click", closeViewer);
 document.getElementById("v-prev").addEventListener("click", () => { showPhoto(vPos - 1); showControls(); });
 document.getElementById("v-next").addEventListener("click", () => { showPhoto(vPos + 1); showControls(); });
+// 写真・文字・ボタン以外の空いている所を押したら閉じる（PC・スマホ共通）
 viewer.addEventListener("click", e => {
-  if (e.target === viewer || e.target.classList.contains("v-figure")) { if (!isMobileView()) closeViewer(); }
+  if (e.target === viewer || e.target.classList.contains("v-figure") || e.target.classList.contains("v-info")) closeViewer();
 });
 vImg.addEventListener("click", showControls);
 document.addEventListener("keydown", e => {
